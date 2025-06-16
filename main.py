@@ -141,7 +141,7 @@ async def handle_request(request, conn):
         path = request_line.split(' ')[1]
         print(f"Solicitud recibida: {path}")
 
-        if path == '/' or path == '/index.html':
+        if path == '/' or path == '/index_optimized.html':
             html = await web_page()
             conn.send('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n' + html)
             return
