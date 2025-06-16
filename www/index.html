@@ -273,9 +273,7 @@ button:active {
                 DERECHA
             </button>
         </div>
-    </div>
-
-    <div class="controls-section">
+    </div>    <div class="controls-section">
         <h2>SONIDOS R2D2</h2>
         <div class="button-group">
             <button onclick="playSound('A1')" aria-label="Reproducir sonido A1">Sonido A1</button>
@@ -285,6 +283,24 @@ button:active {
             <button onclick="playSound('A5')" aria-label="Reproducir sonido A5">Sonido A5</button>
             <button onclick="playSound('A6')" aria-label="Reproducir sonido A6">Sonido A6</button>
             <button onclick="playSound('A7')" aria-label="Reproducir sonido A7">Sonido A7</button>
+        </div>
+    </div>
+
+    <div class="controls-section">
+        <h2>DIAGNÓSTICO SISTEMA</h2>
+        <div class="button-group">
+            <button onclick="runDiagnostic()" aria-label="Ejecutar diagnóstico del sistema">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                DIAGNÓSTICO
+            </button>
+            <button onclick="testSine()" aria-label="Probar sonido sine">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+                TEST SINE
+            </button>
         </div>
     </div>
 
@@ -350,7 +366,52 @@ function moveHead(direction) {
 }
 
 function playSound(soundId) {
-    fetch(`/sound/${soundId}`).catch(err => console.error('Error ESP32:', err));
+    console.log(`Reproduciendo sonido: ${soundId}`);
+    fetch(`/${soundId}`)
+        .then(response => {
+            if (response.ok) {
+                console.log(`Sonido ${soundId} enviado correctamente`);
+            } else {
+                console.error(`Error enviando sonido ${soundId}:`, response.status);
+            }
+        })
+        .catch(err => console.error('Error de conexión:', err));
+    
+    // Efecto visual
+    r2d2Container.classList.add('shake');
+    setTimeout(() => r2d2Container.classList.remove('shake'), 500);
+}
+
+function runDiagnostic() {
+    console.log('Ejecutando diagnóstico del sistema...');
+    fetch('/diagnostico')
+        .then(response => {
+            if (response.ok) {
+                alert('Diagnóstico ejecutado. Revisa la consola del ESP32 para ver los resultados.');
+            } else {
+                alert('Error ejecutando diagnóstico. Código: ' + response.status);
+            }
+        })
+        .catch(err => {
+            console.error('Error ejecutando diagnóstico:', err);
+            alert('Error de conexión durante el diagnóstico.');
+        });
+}
+
+function testSine() {
+    console.log('Ejecutando prueba de sonido sine...');
+    fetch('/test-sine')
+        .then(response => {
+            if (response.ok) {
+                alert('Prueba sine ejecutada. Deberías escuchar un tono durante 3 segundos.');
+            } else {
+                alert('Error ejecutando prueba sine. Código: ' + response.status);
+            }
+        })
+        .catch(err => {
+            console.error('Error ejecutando prueba sine:', err);
+            alert('Error de conexión durante la prueba sine.');
+        });
 }
 
 // --- Efectos Visuales Adicionales para R2D2 (Función original ya no aplica al SVG) ---
