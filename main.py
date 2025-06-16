@@ -108,7 +108,7 @@ async def connect_to_wifi():
 
 async def web_page():
     try:
-        with open('www/index.html', 'r') as f:
+        with open('www/index_optimized.html', 'r') as f:
             return f.read()
     except:
         return "<html><body><h1>Error: archivo index.html no encontrado.</h1></body></html>"
@@ -141,7 +141,7 @@ async def handle_request(request, conn):
         path = request_line.split(' ')[1]
         print(f"Solicitud recibida: {path}")
 
-        if path == '/' or path == '/index_optimized.html':
+        if path == '/' or path == '/index.html':
             html = await web_page()
             conn.send('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n' + html)
             return

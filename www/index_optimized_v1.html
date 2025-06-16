@@ -326,6 +326,9 @@
 
             // --- Funciones de Efectos Visuales ---
 
+            /**
+             * Crea estrellas y las añade al fondo.
+             */
             function createStars() {
                 if (!starfield) return;
                 for (let i = 0; i < NUM_STARS; i++) {
@@ -338,6 +341,10 @@
                 }
             }
 
+            /**
+             * Activa una animación de "temblor" en el contenedor de R2D2.
+             * @param {number} duration - La duración de la animación en milisegundos.
+             */
             function triggerShake(duration = 500) {
                 if (!r2d2Container) return;
                 r2d2Container.classList.add('shake');
@@ -345,85 +352,82 @@
             }
 
             // --- Funciones de Comunicación con el ESP32 ---
-            
+
             /**
-             * Envía un comando al ESP32.
-             * @param {string} endpoint - El endpoint del API.
-             * @param {object} options - Opciones como mensajes de éxito/error y la acción ejecutada.
+             * Envía un comando al ESP32 a través de fetch.
+             * @param {string} endpoint - El endpoint del API al que se enviará el comando.
+             * @param {object} options - Opciones para la función, como mensajes de éxito/error.
              */
-            async function sendCommand(endpoint, { action, successMessage, errorMessage }) {
+            async function sendCommand(endpoint, { successMessage, errorMessage }) {
                 console.log(`Enviando comando a: ${endpoint}`);
                 try {
                     const response = await fetch(endpoint);
                     if (response.ok) {
                         console.log(successMessage);
-                        // Mostrar alerta de éxito solo para acciones de diagnóstico
+                        // Mostrar alerta solo para acciones de diagnóstico
                         if (action === 'runDiagnostic' || action === 'testSine') {
                             alert(successMessage);
                         }
                     } else {
-                        // Si el servidor responde con un código de error HTTP (4xx, 5xx)
                         console.error(`${errorMessage}:`, response.status, response.statusText);
                         alert(`${errorMessage}. Código: ${response.status}`);
                     }
                 } catch (err) {
-                    // ** CAMBIO CLAVE **
-                    // Este bloque se activa si el servidor ESP32 no responde (o cierra la conexión abruptamente).
-                    // Lo tratamos como un éxito "silencioso" para evitar la alerta de error innecesaria.
-                    console.warn(`Comando enviado a ${endpoint}, pero no se recibió respuesta HTTP estándar. Asumiendo éxito. Error:`, err.message);
-                    // Ya no mostramos la alerta de error de conexión aquí.
-                    // alert('Error de conexión con el ESP32.'); 
+                    console.error('Error de conexión:', err);
+                    alert('Error de conexión con el ESP32.');
                 }
             }
 
             // --- Manejador de Eventos Principal (Delegación de Eventos) ---
 
+            /**
+             * Gestiona todos los clics dentro del panel de control.
+             * @param {Event} event - El objeto del evento de clic.
+             */
             function handleControlEvents(event) {
                 const button = event.target.closest('button');
-                if (!button) return;
+                if (!button) return; // Si el clic no fue en un botón, no hacer nada
 
                 const { action, value } = button.dataset;
-                if (!action) return;
-
-                // ** CORRECCIÓN: Pasamos 'action' a sendCommand para que pueda usarlo **
-                const commandOptions = {
-                    action: action, // Pasamos la acción actual
-                    successMessage: '',
-                    errorMessage: ''
-                };
+                if (!action) return; // Si el botón no tiene una acción, ignorar
 
                 switch (action) {
                     case 'moveHead':
                         triggerShake(200);
-                        commandOptions.successMessage = `Comando de cabeza '${value}' enviado.`;
-                        commandOptions.errorMessage = `Error moviendo la cabeza`;
-                        sendCommand(`/servo/${value}`, commandOptions);
+                        sendCommand(`/servo/${value}`, {
+                            successMessage: `Comando de cabeza '${value}' enviado.`,
+                            errorMessage: `Error moviendo la cabeza`
+                        });
                         break;
 
                     case 'playSound':
                         triggerShake(500);
-                        commandOptions.successMessage = `Sonido '${value}' enviado.`;
-                        commandOptions.errorMessage = `Error enviando sonido '${value}'`;
-                        sendCommand(`/${value}`, commandOptions);
+                        sendCommand(`/${value}`, {
+                            successMessage: `Sonido '${value}' enviado.`,
+                            errorMessage: `Error enviando sonido '${value}'`
+                        });
                         break;
 
                     case 'playRandomSound':
                         triggerShake(500);
-                        commandOptions.successMessage = 'Comando de sonido aleatorio enviado.';
-                        commandOptions.errorMessage = 'Error enviando sonido aleatorio';
-                        sendCommand('/random_sound', commandOptions);
+                        sendCommand('/random_sound', {
+                            successMessage: 'Comando de sonido aleatorio enviado.',
+                            errorMessage: 'Error enviando sonido aleatorio'
+                        });
                         break;
 
                     case 'runDiagnostic':
-                        commandOptions.successMessage = 'Diagnóstico ejecutado. Revisa la consola del ESP32.';
-                        commandOptions.errorMessage = 'Error ejecutando diagnóstico';
-                        sendCommand('/diagnostico', commandOptions);
+                        sendCommand('/diagnostico', {
+                            successMessage: 'Diagnóstico ejecutado. Revisa la consola del ESP32.',
+                            errorMessage: 'Error ejecutando diagnóstico'
+                        });
                         break;
 
                     case 'testSine':
-                        commandOptions.successMessage = 'Prueba sine ejecutada. Deberías escuchar un tono.';
-                        commandOptions.errorMessage = 'Error ejecutando prueba sine';
-                        sendCommand('/test-sine', commandOptions);
+                        sendCommand('/test-sine', {
+                            successMessage: 'Prueba sine ejecutada. Deberías escuchar un tono.',
+                            errorMessage: 'Error ejecutando prueba sine'
+                        });
                         break;
                 }
             }
