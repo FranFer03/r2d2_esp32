@@ -188,6 +188,19 @@
             transform: scale(0.97);
             box-shadow: 0 0 3px #00EFFF, inset 0 0 10px rgba(0, 0, 0, 0.5);
         }
+        
+        /* --- NUEVO: Estilos para la disposición de botones de movimiento --- */
+        .movement-controls button[data-value="left"] {
+            order: 1; /* El primer elemento */
+        }
+        .movement-controls button[data-value="right"] {
+            order: 2; /* El segundo elemento */
+        }
+        .movement-controls button[data-action="moveHead"][data-value="stop"] {
+            order: 3; /* El tercer elemento */
+            flex-basis: 100%; /* Ocupa toda la línea y fuerza el salto */
+            margin-top: 10px; /* Añade un espacio arriba */
+        }
 
         /* --- Iconos de Botones (SVG) --- */
         .icon {
@@ -263,7 +276,7 @@
     <main id="control-panel">
         <div class="controls-section">
             <h2>MOVIMIENTO CABEZA</h2>
-            <div class="button-group">
+            <div class="button-group movement-controls">
                 <button data-action="moveHead" data-value="left" aria-label="Mover cabeza a la izquierda">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
                     IZQUIERDA
@@ -367,12 +380,10 @@
                         alert(`${errorMessage}. Código: ${response.status}`);
                     }
                 } catch (err) {
-                    // ** CAMBIO CLAVE **
                     // Este bloque se activa si el servidor ESP32 no responde (o cierra la conexión abruptamente).
                     // Lo tratamos como un éxito "silencioso" para evitar la alerta de error innecesaria.
                     console.warn(`Comando enviado a ${endpoint}, pero no se recibió respuesta HTTP estándar. Asumiendo éxito. Error:`, err.message);
                     // Ya no mostramos la alerta de error de conexión aquí.
-                    // alert('Error de conexión con el ESP32.'); 
                 }
             }
 
@@ -385,9 +396,8 @@
                 const { action, value } = button.dataset;
                 if (!action) return;
 
-                // ** CORRECCIÓN: Pasamos 'action' a sendCommand para que pueda usarlo **
                 const commandOptions = {
-                    action: action, // Pasamos la acción actual
+                    action: action,
                     successMessage: '',
                     errorMessage: ''
                 };
