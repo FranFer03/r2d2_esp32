@@ -9,245 +9,13 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"></noscript>
     <link rel="preload" href="image/cabeza.png" as="image">
-    <link rel="preload" href="image/perfil.png" as="image">    <style>
-/* --- Fuentes y Estilos Base --- */
-@font-face {
-    font-family: 'Star Jedi';
-    src: url('https://fonts.cdnfonts.com/s/14618/Starjedi.ttf') format('truetype');
-    font-display: swap;
-}
-
-body {
-    font-family: 'Orbitron', sans-serif;
-    background-color: #000;
-    color: #E0E0E0;
-    text-align: center;
-    margin: 0;
-    padding: 0 15px;
-    min-height: 100vh;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-h1 {
-    font-family: 'Star Jedi', 'Orbitron', sans-serif;
-    letter-spacing: 4px;
-    font-size: clamp(2em, 6vw, 3.5em);
-    margin: 30px 0 20px;
-    color: #FFE81F;
-    text-shadow: 0 0 5px #FFE81F, 0 0 15px #FFE81F, 0 0 25px #FFE81F, 0 0 35px #c4a000;
-    animation: pulseTitle 3s infinite ease-in-out;
-}
-
-@keyframes pulseTitle {
-    0%, 100% { text-shadow: 0 0 5px #FFE81F, 0 0 15px #FFE81F, 0 0 25px #FFE81F, 0 0 35px #c4a000; }
-    50% { text-shadow: 0 0 8px #FFE81F, 0 0 20px #FFE81F, 0 0 35px #FFE81F, 0 0 50px #c4a000; }
-}
-
-h2 {
-    font-family: 'Orbitron', sans-serif;
-    margin: 25px 0 15px;
-    color: #00EFFF;
-    text-shadow: 0 0 5px #00EFFF, 0 0 10px #00EFFF;
-    font-weight: 700;
-    font-size: clamp(1.2em, 4vw, 1.8em);
-}
-
-/* --- Fondo de Estrellas Optimizado --- */
-.starfield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-}
-
-.star {
-    position: absolute;
-    background-color: #FFF;
-    border-radius: 50%;
-    animation: twinkle-move linear infinite;
-    box-shadow: 0 0 3px #fff;
-    will-change: transform, opacity;
-}
-
-.star.s1 { width: 1px; height: 1px; animation-duration: 50s; }
-.star.s2 { width: 2px; height: 2px; animation-duration: 70s; }
-.star.s3 { width: 3px; height: 3px; animation-duration: 90s; }
-
-@keyframes twinkle-move {
-    0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
-    25% { opacity: 1; }
-    50% { transform: translate3d(50px, 100px, 0) scale(0.8); opacity: 0.3; }
-    75% { opacity: 1; }
-    100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
-}
-
-/* --- Contenedor R2D2 Optimizado --- */
-.r2d2-container {
-    margin: 20px auto 10px;
-    width: 180px;
-    height: 220px;
-    position: relative;
-    cursor: grab;
-    animation: r2d2Float 5s ease-in-out infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    will-change: transform;
-}
-
-.r2d2-container img#main-r2d2-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-.r2d2-container:active {
-    cursor: grabbing;
-}
-
-@keyframes r2d2Float {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, -10px, 0); }
-}
-
-.r2d2-container.shake {
-    animation: r2d2Shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-}
-
-@keyframes r2d2Shake {
-  10%, 90% { transform: translate3d(-1px, -1px, 0) rotate(-1deg); }
-  20%, 80% { transform: translate3d(2px, 1px, 0) rotate(1deg); }
-  30%, 50%, 70% { transform: translate3d(-3px, -2px, 0) rotate(-2deg); }
-  40%, 60% { transform: translate3d(3px, 2px, 0) rotate(2deg); }
-}
-
-/* --- Controles Optimizados --- */
-.controls-section {
-    background: rgba(10, 20, 40, 0.6);
-    border: 1px solid #00EFFF;
-    border-radius: 15px;
-    padding: 15px 20px 20px;
-    margin: 20px auto;
-    max-width: 90%;
-    width: 550px;
-    box-shadow: 0 0 10px rgba(0, 239, 255, 0.3), 0 0 20px rgba(0, 239, 255, 0.2);
-    backdrop-filter: blur(3px);
-    z-index: 1;
-}
-
-.button-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-button {
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(0.9em, 2.5vw, 1.1em);
-    font-weight: 700;
-    margin: 8px 5px;
-    padding: 12px 20px;
-    border: 2px solid #00EFFF;
-    border-radius: 8px;
-    background: transparent;
-    color: #00EFFF;
-    box-shadow: 0 0 5px #00EFFF, inset 0 0 5px rgba(0, 239, 255, 0.5);
-    cursor: pointer;
-    transition: all 0.2s ease-in-out, transform 0.1s ease-out;
-    outline: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-width: 130px;
-    text-transform: uppercase;
-    will-change: transform;
-}
-
-button:hover {
-    color: #FFF;
-    background-color: #00EFFF;
-    border-color: #FFF;
-    box-shadow: 0 0 10px #00EFFF, 0 0 20px #00EFFF, 0 0 30px #00EFFF, inset 0 0 8px rgba(255, 255, 255, 0.7);
-    transform: scale(1.05) translateY(-2px);
-}
-
-button:active {
-    transform: scale(0.97);
-    box-shadow: 0 0 3px #00EFFF, inset 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.icon {
-    width: clamp(18px, 3vw, 22px);
-    height: clamp(18px, 3vw, 22px);
-    fill: currentColor;
-    vertical-align: middle;
-}
-
-/* --- Imagen de Esquina Optimizada --- */
-.corner-image-r2d2 {
-    position: fixed;
-    bottom: 15px;
-    left: 15px;
-    width: 100px;
-    height: auto;
-    z-index: 0;
-    opacity: 0.8;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    animation: r2d2Float 6s ease-in-out infinite alternate;
-    animation-delay: 0.5s;
-    will-change: transform;
-}
-
-.corner-image-r2d2:hover {
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-/* Media queries optimizadas */
-@media (max-width: 768px) {
-    .corner-image-r2d2 {
-        width: 80px;
-        bottom: 10px;
-        left: 10px;
-    }
-}
-
-@media (max-width: 600px) {
-    h1 {
-        letter-spacing: 2px;
-    }
-    .controls-section {
-        width: 95%;
-        padding: 10px 15px 15px;
-    }
-    button {
-        padding: 10px 15px;
-        min-width: 110px;
-    }
-    .button-group {
-        gap: 10px;
-    }
-    .corner-image-r2d2 {
-        width: 60px;
-        bottom: 8px;
-        left: 8px;
-    }
-}
-    </style>
+    <link rel="preload" href="image/perfil.png" as="image">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="starfield">
-        </div>    <div class="r2d2-container" id="r2d2-container">
+    <div class="starfield"></div>
+
+    <div class="r2d2-container" id="r2d2-container">
         <img src="image/cabeza.png"
              alt="Imagen principal de R2-D2" 
              id="main-r2d2-image"
@@ -275,7 +43,9 @@ button:active {
                 DERECHA
             </button>
         </div>
-    </div>    <div class="controls-section">
+    </div>
+
+    <div class="controls-section">
         <h2>SONIDOS R2D2</h2>
         <div class="button-group">
             <button onclick="playSound('A1')" aria-label="Reproducir sonido A1">Sonido A1</button>
@@ -305,13 +75,16 @@ button:active {
                 TEST SINE
             </button>
         </div>
-    </div>    <img src="image/perfil.png" 
+    </div>
+
+    <img src="image/perfil.png" 
          class="corner-image-r2d2"
          width="100"
          height="100"
          loading="lazy"
          alt="R2-D2 perfil"
          onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iI0ZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVycm9yPC90ZXh0Pjwvc3ZnPg=='; this.alt='Error al cargar imagen de R2-D2 en esquina';">
+
     <script>
 // --- Configuración Inicial ---
 const r2d2Container = document.getElementById('r2d2-container');

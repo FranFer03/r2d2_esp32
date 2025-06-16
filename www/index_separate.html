@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control R2D2 ESP32 - Star Wars Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"></noscript>
+    <link rel="preload" href="image/cabeza.png" as="image">
+    <link rel="preload" href="image/perfil.png" as="image">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="starfield"></div>
+
+    <div class="r2d2-container" id="r2d2-container">
+        <img src="image/cabeza.png"
+             alt="Imagen principal de R2-D2" 
+             id="main-r2d2-image"
+             width="180"
+             height="220"
+             loading="eager"
+             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjIyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI0ZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVycm9yPC90ZXh0Pjwvc3ZnPg=='; this.alt='Error al cargar imagen principal de R2-D2';">
+    </div>
+
+    <h1>CONTROL R2D2</h1>
+
+    <div class="controls-section">
+        <h2>MOVIMIENTO CABEZA</h2>
+        <div class="button-group">
+            <button onclick="moveHead('left')" aria-label="Mover cabeza a la izquierda">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                IZQUIERDA
+            </button>
+            <button onclick="moveHead('stop')" aria-label="Detener cabeza">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                DETENER
+            </button>
+            <button onclick="moveHead('right')" aria-label="Mover cabeza a la derecha">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                DERECHA
+            </button>
+        </div>
+    </div>
+
+    <div class="controls-section">
+        <h2>SONIDOS R2D2</h2>
+        <div class="button-group">
+            <button onclick="playSound('A1')" aria-label="Reproducir sonido A1">Sonido A1</button>
+            <button onclick="playSound('A2')" aria-label="Reproducir sonido A2">Sonido A2</button>
+            <button onclick="playSound('A3')" aria-label="Reproducir sonido A3">Sonido A3</button>
+            <button onclick="playSound('A4')" aria-label="Reproducir sonido A4">Sonido A4</button>
+            <button onclick="playSound('A5')" aria-label="Reproducir sonido A5">Sonido A5</button>
+            <button onclick="playSound('A6')" aria-label="Reproducir sonido A6">Sonido A6</button>
+            <button onclick="playSound('A7')" aria-label="Reproducir sonido A7">Sonido A7</button>
+            <button onclick="playRandomSound()" aria-label="Reproducir sonido aleatorio">SONIDO ALEATORIO</button>
+        </div>
+    </div>
+
+    <div class="controls-section">
+        <h2>DIAGNÓSTICO SISTEMA</h2>
+        <div class="button-group">
+            <button onclick="runDiagnostic()" aria-label="Ejecutar diagnóstico del sistema">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                DIAGNÓSTICO
+            </button>
+            <button onclick="testSine()" aria-label="Probar sonido sine">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+                TEST SINE
+            </button>
+        </div>
+    </div>
+
+    <img src="image/perfil.png" 
+         class="corner-image-r2d2"
+         width="100"
+         height="100"
+         loading="lazy"
+         alt="R2-D2 perfil"
+         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iI0ZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVycm9yPC90ZXh0Pjwvc3ZnPg=='; this.alt='Error al cargar imagen de R2-D2 en esquina';">
+
+    <script src="script.js"></script>
+</body>
+</html>
