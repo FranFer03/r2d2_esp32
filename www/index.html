@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control R2D2 ESP32 - Star Wars Edition</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+/* --- Fuentes y Estilos Base --- */
+@font-face {
+    font-family: 'Star Jedi';
+    src: url('https://fonts.cdnfonts.com/s/14618/Starjedi.ttf') format('truetype');
+    font-display: swap;
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    background-color: #000000;
+    color: #E0E0E0;
+    text-align: center;
+    margin: 0;
+    padding: 0 15px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+h1 {
+    font-family: 'Star Jedi', 'Orbitron', sans-serif;
+    letter-spacing: 4px;
+    font-size: clamp(2em, 6vw, 3.5em);
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: #FFE81F;
+    text-shadow: 0 0 5px #FFE81F, 0 0 15px #FFE81F, 0 0 25px #FFE81F, 0 0 35px #c4a000;
+    animation: pulseTitle 3s infinite ease-in-out;
+}
+
+@keyframes pulseTitle {
+    0%, 100% { text-shadow: 0 0 5px #FFE81F, 0 0 15px #FFE81F, 0 0 25px #FFE81F, 0 0 35px #c4a000; }
+    50% { text-shadow: 0 0 8px #FFE81F, 0 0 20px #FFE81F, 0 0 35px #FFE81F, 0 0 50px #c4a000; }
+}
+
+h2 {
+    font-family: 'Orbitron', sans-serif;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: #00EFFF;
+    text-shadow: 0 0 5px #00EFFF, 0 0 10px #00EFFF;
+    font-weight: 700;
+    font-size: clamp(1.2em, 4vw, 1.8em);
+}
+
+/* --- Fondo de Estrellas Animado --- */
+.starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    background-color: #FFF;
+    border-radius: 50%;
+    animation: twinkle-move linear infinite;
+    box-shadow: 0 0 3px #fff, 0 0 6px #fff;
+}
+
+.star.s1 { width: 1px; height: 1px; animation-duration: 50s; }
+.star.s2 { width: 2px; height: 2px; animation-duration: 70s; }
+.star.s3 { width: 3px; height: 3px; animation-duration: 90s; }
+
+@keyframes twinkle-move {
+    0% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.5; }
+    25% { opacity: 1; }
+    50% { transform: translateY(100px) translateX(50px) scale(0.8); opacity: 0.3; }
+    75% { opacity: 1; }
+    100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.5; }
+}
+
+/* --- Contenedor y Animaciones de R2D2 --- */
+.r2d2-container {
+    margin: 20px auto 10px auto;
+    width: 180px; /* Ancho deseado para la imagen */
+    height: 220px; /* Alto deseado para la imagen, ajustar según la proporción de la imagen */
+    position: relative;
+    cursor: grab;
+    animation: r2d2Float 5s ease-in-out infinite; /* Animación de flotación */
+    display: flex; /* Para centrar la imagen si es más pequeña que el contenedor */
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.r2d2-container img#main-r2d2-image { /* Estilos específicos para la imagen principal de R2D2 */
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Asegura que toda la imagen sea visible y mantenga la proporción */
+}
+.r2d2-container:active {
+    cursor: grabbing;
+}
+
+@keyframes r2d2Float { /* Animación de flotación reutilizable */
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* Flota un poco */
+}
+
+.r2d2-container.shake {
+    animation: r2d2Shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes r2d2Shake {
+  10%, 90% { transform: translate3d(-1px, -1px, 0) rotate(-1deg); }
+  20%, 80% { transform: translate3d(2px, 1px, 0) rotate(1deg); }
+  30%, 50%, 70% { transform: translate3d(-3px, -2px, 0) rotate(-2deg); }
+  40%, 60% { transform: translate3d(3px, 2px, 0) rotate(2deg); }
+}
+
+/* --- Secciones de Controles y Botones --- */
+.controls-section {
+    background: rgba(10, 20, 40, 0.6);
+    border: 1px solid #00EFFF;
+    border-radius: 15px;
+    padding: 15px 20px 20px 20px;
+    margin: 20px auto;
+    max-width: 90%;
+    width: 550px;
+    box-shadow: 0 0 10px rgba(0, 239, 255, 0.3), 0 0 20px rgba(0, 239, 255, 0.2);
+    backdrop-filter: blur(3px);
+    z-index: 1;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+button {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(0.9em, 2.5vw, 1.1em);
+    font-weight: 700;
+    margin: 8px 5px;
+    padding: 12px 20px;
+    border: 2px solid;
+    border-radius: 8px;
+    background: transparent;
+    color: #00EFFF;
+    border-color: #00EFFF;
+    box-shadow: 0 0 5px #00EFFF, inset 0 0 5px rgba(0, 239, 255, 0.5);
+    cursor: pointer;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.1s ease-out, border-color 0.2s ease-in-out;
+    outline: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 130px;
+    text-transform: uppercase;
+}
+
+button:hover {
+    color: #FFFFFF;
+    background-color: #00EFFF;
+    border-color: #FFFFFF;
+    box-shadow: 0 0 10px #00EFFF, 0 0 20px #00EFFF, 0 0 30px #00EFFF, inset 0 0 8px rgba(255, 255, 255, 0.7);
+    transform: scale(1.05) translateY(-2px);
+}
+
+button:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 3px #00EFFF, inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Iconos de Botones (SVG) --- */
+.icon {
+    width: clamp(18px, 3vw, 22px);
+    height: clamp(18px, 3vw, 22px);
+    fill: currentColor;
+    vertical-align: middle;
+}
+
+/* --- Imagen de Esquina --- */
+.corner-image-r2d2 {
+    position: fixed;
+    bottom: 15px;
+    left: 15px;
+    width: 100px;
+    height: auto;
+    z-index: 0;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    animation: r2d2Float 6s ease-in-out infinite alternate; /* Aplicando animación de flotación, con 'alternate' para variar */
+    animation-delay: 0.5s; /* Pequeño retraso para que no floten exactamente igual */
+}
+
+.corner-image-r2d2:hover {
+    opacity: 1;
+    transform: scale(1.1); /* Mantenemos el hover de escala */
+}
+
+/* Media queries para mejorar la responsividad */
+@media (max-width: 768px) {
+    .corner-image-r2d2 {
+        width: 80px;
+        bottom: 10px;
+        left: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        letter-spacing: 2px;
+    }
+    .controls-section {
+        width: 95%;
+        padding: 10px 15px 15px 15px;
+    }
+    button {
+        padding: 10px 15px;
+        min-width: 110px;
+    }
+    .button-group {
+        gap: 10px;
+    }
+    .corner-image-r2d2 {
+        width: 60px;
+        bottom: 8px;
+        left: 8px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="starfield">
+        </div>
+
+    <div class="r2d2-container" id="r2d2-container">
+        <img src="image/cabeza.png"
+             alt="Imagen principal de R2-D2" 
+             id="main-r2d2-image"
+             onerror="this.onerror=null; this.src='https://placehold.co/180x220/000000/FFFFFF?text=R2D2+Error'; this.alt='Error al cargar imagen principal de R2-D2';">
+    </div>
+
+    <h1>CONTROL R2D2</h1>
+
+    <div class="controls-section">
+        <h2>MOVIMIENTO CABEZA</h2>
+        <div class="button-group">
+            <button onclick="moveHead('left')" aria-label="Mover cabeza a la izquierda">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                IZQUIERDA
+            </button>
+            <button onclick="moveHead('stop')" aria-label="Detener cabeza">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                DETENER
+            </button>
+            <button onclick="moveHead('right')" aria-label="Mover cabeza a la derecha">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                DERECHA
+            </button>
+        </div>
+    </div>
+
+    <div class="controls-section">
+        <h2>SONIDOS R2D2</h2>
+        <div class="button-group">
+            <button onclick="playSound('A1')" aria-label="Reproducir sonido A1">Sonido A1</button>
+            <button onclick="playSound('A2')" aria-label="Reproducir sonido A2">Sonido A2</button>
+            <button onclick="playSound('A3')" aria-label="Reproducir sonido A3">Sonido A3</button>
+            <button onclick="playSound('A4')" aria-label="Reproducir sonido A4">Sonido A4</button>
+            <button onclick="playSound('A5')" aria-label="Reproducir sonido A5">Sonido A5</button>
+            <button onclick="playSound('A6')" aria-label="Reproducir sonido A6">Sonido A6</button>
+            <button onclick="playSound('A7')" aria-label="Reproducir sonido A7">Sonido A7</button>
+        </div>
+    </div>
+
+    <img src="image/perfil.png" class="corner-image-r2d2"
+    onerror="this.onerror=null; this.src='https://placehold.co/100x100/000000/FFFFFF?text=R2D2+Error'; this.alt='Error al cargar imagen de R2-D2 en esquina';">
+
+
+    <script>
+// --- Configuración Inicial y Elementos del DOM ---
+const r2d2Container = document.getElementById('r2d2-container');
+// const r2d2Dome = document.querySelector('.r2d2-dome'); // SVG ya no existe
+// const r2d2Eye = document.getElementById('r2eye'); // SVG ya no existe
+// const r2d2EyeHighlight = document.getElementById('r2eye-highlight'); // SVG ya no existe
+
+// --- Lógica para el Fondo de Estrellas ---
+const starfield = document.querySelector('.starfield');
+const numStars = 100; // Cantidad de estrellas
+
+function createStars() {
+    for (let i = 0; i < numStars; i++) {
+        let star = document.createElement('div');
+        star.className = 'star';
+        star.classList.add('s' + (Math.floor(Math.random() * 3) + 1));
+        
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 5 + 's'; 
+        starfield.appendChild(star);
+    }
+}
+
+// --- Animación de la Cabeza de R2D2 (Función original ya no aplica directamente al SVG) ---
+// let currentHeadAngle = 0; 
+// let headAnimationInterval = null;
+
+/* // La función animateHeadSmoothly manipulaba el SVG directamente, ya no es necesaria.
+function animateHeadSmoothly(targetAngle) {
+    clearInterval(headAnimationInterval); 
+
+    headAnimationInterval = setInterval(() => {
+        const angleDifference = targetAngle - currentHeadAngle;
+
+        if (Math.abs(angleDifference) < 0.5) {
+            currentHeadAngle = targetAngle;
+            // r2d2Dome.setAttribute('transform', `rotate(${currentHeadAngle} 90 70)`); // SVG ya no existe
+            clearInterval(headAnimationInterval);
+        } else {
+            currentHeadAngle += angleDifference * 0.1; 
+            // r2d2Dome.setAttribute('transform', `rotate(${currentHeadAngle} 90 70)`); // SVG ya no existe
+        }
+    }, 16); 
+}
+*/
+
+// --- Funciones de Control ---
+function moveHead(direction) {
+    console.log(`Comando cabeza: /servo/${direction}`);
+    // fetch('/servo/' + direction).catch(err => console.error('Error ESP32:', err));
+// La animación visual de la cabeza ya no es posible con una imagen estática de la misma manera.
+    // Se mantiene la animación de "temblor" del contenedor.
+    r2d2Container.classList.add('shake');
+    setTimeout(() => r2d2Container.classList.remove('shake'), 200); // Duración corta para el movimiento
+}
+
+function playSound(soundId) {
+    fetch(`/sound/${soundId}`).catch(err => console.error('Error ESP32:', err));
+}
+
+// --- Efectos Visuales Adicionales para R2D2 (Función original ya no aplica al SVG) ---
+/* // La función blinkR2Eye manipulaba el SVG directamente.
+function blinkR2Eye() {
+    // r2d2EyeHighlight.setAttribute('fill', '#00EFFF'); // SVG ya no existe
+    // r2d2Eye.setAttribute('fill', '#555'); // SVG ya no existe
+    
+    setTimeout(() => {
+        // r2d2EyeHighlight.setAttribute('fill', '#ff0000'); // SVG ya no existe
+        // r2d2Eye.setAttribute('fill', '#222'); // SVG ya no existe
+    }, 200);
+     setTimeout(() => { 
+        // r2d2EyeHighlight.setAttribute('fill', '#00EFFF'); // SVG ya no existe
+        // r2d2Eye.setAttribute('fill', '#555'); // SVG ya no existe
+        setTimeout(() => {
+            // r2d2EyeHighlight.setAttribute('fill', '#ff0000'); // SVG ya no existe
+            // r2d2Eye.setAttribute('fill', '#222'); // SVG ya no existe
+        }, 150);
+    }, 350);
+}
+*/
+
+// --- Inicialización cuando el DOM esté listo ---
+document.addEventListener('DOMContentLoaded', () => {
+    createStars(); 
+
+    // Pequeña animación de "encendido" de R2D2 al cargar (solo el temblor ahora)
+    setTimeout(() => {
+        // r2d2EyeHighlight.setAttribute('fill', '#00EFFF'); // SVG ya no existe
+        r2d2Container.classList.add('shake');
+        setTimeout(() => {
+            // r2d2EyeHighlight.setAttribute('fill', '#ff0000'); // SVG ya no existe
+            r2d2Container.classList.remove('shake');
+        }, 500);
+    }, 200);
+});
+    </script>
+</body>
+</html>
