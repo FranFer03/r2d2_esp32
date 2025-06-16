@@ -7,7 +7,7 @@ import time
 import random
 import uasyncio as asyncio # type: ignore
 from machine import SPI, Pin # type: ignore
-from sounds import VS1053
+from components.sounds import VS1053
 import sdcard # type: ignore
 from env import *
 
