@@ -283,6 +283,7 @@ button:active {
             <button onclick="playSound('A5')" aria-label="Reproducir sonido A5">Sonido A5</button>
             <button onclick="playSound('A6')" aria-label="Reproducir sonido A6">Sonido A6</button>
             <button onclick="playSound('A7')" aria-label="Reproducir sonido A7">Sonido A7</button>
+            <button onclick="playRandomSound()" aria-label="Reproducir sonido aleatorio">SONIDO ALEATORIO</button>
         </div>
     </div>
 
@@ -377,6 +378,23 @@ function playSound(soundId) {
         })
         .catch(err => console.error('Error de conexión:', err));
     
+    // Efecto visual
+    r2d2Container.classList.add('shake');
+    setTimeout(() => r2d2Container.classList.remove('shake'), 500);
+}
+
+function playRandomSound() {
+    console.log('Reproduciendo sonido aleatorio...');
+    fetch('/random_sound')
+        .then(response => {
+            if (response.ok) {
+                console.log('Sonido aleatorio enviado correctamente');
+            } else {
+                console.error('Error enviando sonido aleatorio:', response.status);
+            }
+        })
+        .catch(err => console.error('Error de conexión:', err));
+
     // Efecto visual
     r2d2Container.classList.add('shake');
     setTimeout(() => r2d2Container.classList.remove('shake'), 500);

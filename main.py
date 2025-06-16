@@ -4,6 +4,7 @@ import network # type: ignore
 import socket
 import os
 import time
+import random
 import uasyncio as asyncio # type: ignore
 from machine import SPI, Pin # type: ignore
 from sounds import VS1053
@@ -175,6 +176,25 @@ async def handle_request(request, conn):
             print(f"Intentando reproducir: {nombre}")
             await play_sound(nombre)
             conn.send('HTTP/1.1 204 No Content\r\n\r\n')
+            return
+
+        elif path == '/random_sound':
+            print("Solicitud de sonido aleatorio recibida")
+            try:
+                files = os.listdir('/fc/')
+                audio_files = [f for f in files if f.endswith('.mp3')]
+
+                if not audio_files:
+                    print("Error: No se encontraron archivos MP3 en /fc/")
+                    conn.send('HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nNo se encontraron archivos MP3.')
+                else:
+                    random_filename = random.choice(audio_files)
+                    print(f"Seleccionado aleatoriamente: {random_filename}")
+                    await play_sound(random_filename)
+                    conn.send('HTTP/1.1 204 No Content\r\n\r\n')
+            except Exception as e_random:
+                print(f"Error en /random_sound: {e_random}")
+                conn.send('HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\nError interno al procesar el sonido aleatorio.')
             return
 
         conn.send('HTTP/1.1 404 Not Found\r\n\r\n')
