@@ -9,7 +9,7 @@ import uasyncio as asyncio # type: ignore
 from machine import SPI, Pin # type: ignore
 from components.sounds import VS1053
 import sdcard # type: ignore
-from env import *
+from env import * #type: ignore
 
 # Configuración WiFi
 SSID = NAME_WIFI
@@ -37,7 +37,7 @@ try:
     player = VS1053(spi, reset, dreq, xdcs, xcs)
     print("VS1053 inicializado correctamente")
     # Configurar volumen inicial
-    player.volume(-10, -10)  # Volumen moderado (-10dB)
+    player.volume(0, 0)  # Volumen moderado (-10dB)
     print("Volumen configurado")
 except Exception as e:
     print(f"Error inicializando VS1053: {e}")
@@ -49,7 +49,7 @@ except Exception as e:
         reset.value(1)
         time.sleep_ms(100)
         player = VS1053(spi, reset, dreq, xdcs, xcs)
-        player.volume(-10, -10)
+        player.volume(0, 0)
         print("VS1053 inicializado en segundo intento")
     except Exception as e2:
         print(f"Error crítico inicializando VS1053: {e2}")

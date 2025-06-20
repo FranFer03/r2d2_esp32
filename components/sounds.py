@@ -10,7 +10,7 @@
 
 import time
 import os
-import uasyncio as asyncio
+import uasyncio as asyncio # type: ignore
 
 # V0.1.5 Buffered read option for ESP32 compatibility.
 # V0.1.4 .play efficiency improvements, test with Pico

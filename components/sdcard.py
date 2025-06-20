@@ -20,7 +20,7 @@ Example usage on ESP8266:
 
 """
 
-from micropython import const
+from micropython import const # type: ignore
 import time
 
 
